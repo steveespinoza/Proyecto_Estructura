@@ -1,0 +1,40 @@
+#include <iostream>
+#include<string.h>
+#include<fstream>
+#include<Windows.h>
+using namespace std;
+
+
+//Funciones para tratamiento de archivos
+void crear_Archivo(string nombre_Archivo, string entidad) {
+	ofstream archivo;
+	string nombreA = nombre_Archivo;
+	string ent = entidad;
+	archivo.open(nombreA.c_str(), ios::out);
+	if (archivo.fail()) {
+		cout << "Error al abrir el archivo" << endl;
+		exit(1);
+	}
+	archivo << "*\t\t\t\t------------------------------------------------------------------------------------------------" << endl;
+	archivo << "*\t\t\t\t\t\t\t\tREPORTE DE " << ent << endl;
+	archivo << "*\t\t\t\t------------------------------------------------------------------------------------------------" << endl;
+	archivo.close();
+}
+
+void lectura_Archivo(string nombreArchivo) {
+	ifstream archivonuevo;
+	string textoLinea;
+	string nombreA = nombreArchivo;
+
+	archivonuevo.open(nombreA.c_str(), ios::in);
+	if (archivonuevo.fail()) {
+		cout << "Cuidado con los nombres del archivo, error" << endl;
+		exit(1);
+	}
+	while (!archivonuevo.eof()) {
+		getline(archivonuevo, textoLinea);
+		cout << textoLinea << endl;
+	}
+	archivonuevo.close();
+
+}
