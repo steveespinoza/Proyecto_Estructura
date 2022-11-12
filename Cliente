@@ -1,3 +1,8 @@
+#include <iostream>
+
+
+using namespace std;
+
 struct Cliente {
 	int cod_cl;
 	string nom_cl;
