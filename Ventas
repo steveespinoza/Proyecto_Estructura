@@ -1,0 +1,226 @@
+#include <iostream>
+#include <string>
+#include <stdlib.h>
+#include<conio.h>
+#include<fstream>
+#include<stdio.h>
+
+using namespace std;
+
+struct ventas {
+	string cod;
+	string nom_cli;
+	string nom_pro;
+	int cantidad;
+	float precioUnit;
+	float precioTotal;
+	ventas* sig;
+};
+typedef struct ventas Ventas;
+
+struct nodoArbol3{
+    Ventas * sell;
+    nodoArbol3 *izq,*der;
+};
+typedef struct nodoArbol3 NodoArbol3;
+
+////////////////////////////////////////
+Ventas* crearVentas(string cod,string nom_cli,string nom_pro,int cantidad,float precioUnit,float precioTotal){
+    
+    Ventas* node=(Ventas*)malloc(sizeof(Ventas));
+    node->cod=cod;
+    node->nom_cli=nom_cli;
+    node->nom_pro=nom_pro;
+    node->cantidad=cantidad;
+    node->precioUnit=precioUnit;
+    node->precioTotal=precioTotal;
+    return node;
+}
+/////////////////////////////////
+void imprimirVentas(Ventas *venta){
+    if(venta!=NULL){
+        cout<<"\n"<<"------------------------";
+        cout<<"\n"<<"Codigo:"<<venta->cod;
+        cout<<"\n"<<"Nombre del Cliente:"<<venta->nom_cli;
+        cout<<"\n"<<"Nombre del Producto:"<<venta->nom_pro;
+        cout<<"\n"<<"Cantidad:"<<venta->cantidad;
+        cout<<"\n"<<"Precio de Unidad:"<<venta->precioUnit;
+        cout<<"\n"<<"Precio Total:"<<venta->precioTotal;
+    }
+    
+}
+///////////////////////////////////////////////////////////
+
+NodoArbol3 *crearArbol(Ventas* ventas,NodoArbol3 *izq,NodoArbol3 *der){
+    
+    NodoArbol3 * c = (NodoArbol3*)malloc(sizeof(NodoArbol3));
+    c->sell=ventas;
+    c->izq=izq;
+    c->der=der;
+    return c;
+}
+//////////////////////////////////////////////////////////////
+void ImprimirArbol(NodoArbol3 *n){
+    if(n!=NULL){
+        imprimirVentas(n->sell);
+        ImprimirArbol(n->izq);
+        ImprimirArbol(n->der);
+    }
+}
+/////////////////////////////////////////////////////////////
+Ventas *Buscar(NodoArbol3 *n,string s){
+    
+    if (n == NULL){
+        cout<<"No hay Venta\n";
+        return NULL;
+    }
+    else if(s.compare(n->sell->cod)==0)
+        return n->sell;
+    else if(s.compare(n->sell->cod)>0)
+        return (Buscar(n->der,s));
+    else 
+        return (Buscar(n->izq,s));
+}
+/////////////////////////////////////////////////////////////
+NodoArbol3 *Insertar(NodoArbol3 * nodo, Ventas* n){
+    if(nodo==NULL){
+        nodo=(NodoArbol3*)malloc(sizeof(NodoArbol3));
+        nodo->sell=n;
+        nodo->izq=NULL;
+        nodo->der=NULL;
+    }
+    else if(n->cod.compare(nodo->sell->cod)<0)
+        nodo->izq=Insertar(nodo->izq,n);
+    else if(n->cod.compare(nodo->sell->cod)>0)
+        nodo->der=Insertar(nodo->der,n);
+    return nodo;
+    
+}
+//////////////////////////////////////////////////////////////
+
+NodoArbol3 *retirar(NodoArbol3 *nodo, Ventas* v){
+    NodoArbol3 *nodo1,*nodo2;
+    
+    if(nodo==NULL)
+        return NULL;
+    else if(v->cod.compare(nodo->sell->cod)<0)
+        nodo->izq=retirar(nodo->izq,v);
+    else if(v->cod.compare(nodo->sell->cod)>0)
+        nodo->der=retirar(nodo->der,v);
+        
+    else{
+        if(nodo->izq==NULL && nodo->der==NULL){
+            free(nodo);
+            nodo=NULL;
+        }
+        else if(nodo->izq==NULL){
+           nodo1=nodo;
+           nodo=nodo->der;
+           free(nodo1);
+        }
+        else if(nodo->der==NULL){
+            nodo1=nodo;
+           nodo=nodo->der;
+           free(nodo1);
+        }
+        else{
+            nodo2=nodo->izq;
+            while(nodo2->der!=NULL){
+                nodo2=nodo2->der;
+            }
+            nodo->sell=nodo2->sell;
+            nodo2->sell=v;
+            nodo->izq=retirar(nodo->izq,v);
+        }
+    }
+    return nodo;
+}
+
+/////////////////////////////////////////////////////////////
+void subMenuVentas(){
+    int opcion=0,opc2=0;
+    string num;
+    while(opcion!=5){
+        
+        cout << "--------------------------------------------" << endl;
+		cout << "\tMenu Ventas" << endl;
+		cout << "--------------------------------------------" << endl;
+		cout << "||  [1] Registrar venta" << endl;
+		cout << "||  [2] Listar ventas" << endl;
+		cout << "||  [3] Buscar ventas" << endl;
+		cout << "||  [4] Eliminar ventas" << endl;
+		cout << "||  [5] Volver al menu" << endl;
+        cout << "||||  Digite una opcion \t"; 
+        cout << "---";  cout << "--"; cout << ">\t";
+        cin>>opc2;
+        switch(opc2){
+            case 1:
+                Registrar_Venta();
+                break;
+            case 2:
+                Listar_Venta();
+                break;
+            case 3:
+                Buscar_Venta();
+                break;
+            case 4:
+                Eliminar_Venta();
+                break;
+            case 5:
+                Salir();
+                break;
+        }
+    }
+}
+/////////////////////////////////////////////////////////////
+void Registrar_Venta(){
+    
+    string nombre,producto;
+    int cantidad,codigo;
+    float precioUnit,precioTotal;
+    
+    cout <<"-----Ingrese los datos------"<< endl;
+    cout<<"-------Nombre del cliente-------"<<endl;
+    cin>>nombre;
+    cout<<"--------Nombre del Producto------"<<endl;
+    cin>>producto;
+    cout<<"--------Cantidad del Producto------"<<endl;
+    cin>>cantidad;
+    cout>>"----------Precio del Producto------"<<endl;
+    cin>>precioUnit;
+    
+    precioTotal=cantidad*precioUnit;
+    codigo=1000+rand()%(2001-1000);
+    std::string cod = std::to_string(codigo);
+    
+    crearVentas(cod,nombre,producto,cantidad,precioUnit,precioTotal);
+    
+    
+}
+void Listar_Venta(){
+    
+}
+
+void Buscar_Venta(){
+    
+}
+
+void Eliminar_Venta(){
+    
+}
+
+void Salir(){
+    
+}
+
+/////////////////////////////////////////////////////////////
+int main()
+{
+   Ventas *venta1=crearVentas('1001',"nombre1","Coca-Cola",3,2.50,7.50);
+   Ventas *venta2=crearVentas('1002',"nombre2","Inka-Cola",3,2.00,6);
+   Ventas *venta3=crearVentas('1003',"nombre3","Papas Lays",3,2.50,7.50);
+   
+   
+
+    return 0;
+}
