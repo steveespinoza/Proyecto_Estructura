@@ -1,7 +1,7 @@
 #include <iostream>
+#include <conio.h>
 #include<string.h>
 #include<fstream>
-#include<Windows.h>
 using namespace std;
 
 
@@ -37,4 +37,14 @@ void lectura_Archivo(string nombreArchivo) {
 	}
 	archivonuevo.close();
 
+}
+int main()
+{
+    
+	string Test1 = "Archivo de testeo";
+	string Lista= "Listas";
+    
+    crear_Archivo(Test1,Lista);
+    lectura_Archivo(Test1);
+    return 0;
 }
