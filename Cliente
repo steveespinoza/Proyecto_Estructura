@@ -97,3 +97,16 @@ nodoArbol1* eliminarCliente(nodoArbol1* a,Cliente* c){
     
     
 }
+int main()
+{
+    Cliente *c1 = crearCliente(1,"Diego","Llanos","7643363","94614222");
+    Cliente *c2 = crearCliente(2,"Alejandro","Bellido","71214345","9432372");
+    nodoArbol1 *arbol= crearArbol(c1,crearArbol(c2,NULL,NULL),NULL);
+    mostrarArbol(arbol);
+    eliminarCliente(arbol,c2);
+    cout<<"\n********************"<<endl;
+    mostrarArbol(arbol);
+    
+ 
+}
+
