@@ -1,0 +1,136 @@
+#include <iostream>
+#include <string.h>
+using namespace std;
+//ESTRUCTURA INSUMO
+struct insumo{
+	int cod_in;
+	string nom_in;
+	string desc_in;
+	string imag_in;
+	float precio_in;
+};
+typedef struct insumo Insumo;
+
+Insumo* crearInsumo(int codIn, string nombIn, string descIn, string imagIn, float precioIn){
+    Insumo* i= (Insumo*)malloc(sizeof(Insumo));
+    i->cod_in = codIn;
+    i->nom_in = nombIn;
+    i->desc_in = descIn;
+    i->imag_in = imagIn;
+    i->precio_in = precioIn;
+    return i;
+}
+//IMPRIMIR INSUMOS
+void imprimirInsumo(Insumo* t){
+    if (t != NULL){
+        printf("\n----------------------------------");
+        printf("\nCodigo: %i ", t->cod_in); 
+        cout<<"\nNombre: "<<t->nom_in;
+        cout<<"\nDescripcion: "<<t->desc_in;
+        cout<<"\nPresentacion: "<<t->imag_in;
+        printf("\nPrecio: %.2f ", t->precio_in);
+        printf("\n----------------------------------");
+    }
+}
+//ESTRUCTURA ARBOL INSUMOS
+struct  nodoArbol {
+    Insumo * info; 
+    nodoArbol * izq, * der;
+};
+typedef struct nodoArbol NodoArbol;
+
+NodoArbol* crearArbol(Insumo* t, NodoArbol* i, NodoArbol* d){
+    NodoArbol * a = (NodoArbol*)malloc(sizeof(NodoArbol));
+    a->info = t;
+    a->izq = i;
+    a->der = d;
+    return a;
+}
+//IMPRIMIR ARBOL DE INSUMOS
+void imprimirArbol(NodoArbol* n){
+    if (n != NULL){
+        imprimirInsumo(n->info);
+        imprimirArbol(n->izq); 
+        imprimirArbol(n->der);
+    }
+}
+//METODO BUSCAR
+Insumo * buscar(NodoArbol * a , string s){
+    if (a == NULL){
+        cout<<"es nulo\n";
+        return NULL;
+    }
+    else if (s.compare(a->info->nom_in) == 0)   
+        return a->info; 
+    else if (s.compare(a->info->nom_in) > 0)   
+        return(buscar(a->der, s));   
+    else 
+        return(buscar(a->izq, s));
+}
+//METODO INSERTAR
+NodoArbol* insertarInsumo(NodoArbol* nodo, Insumo* t){
+    if (nodo == NULL)  {
+        nodo = (NodoArbol*)malloc(sizeof(NodoArbol));   
+        nodo->info = t;   
+        nodo->izq = NULL;   
+        nodo->der = NULL;   
+    }
+    else if (t->nom_in.compare(nodo->info->nom_in) < 0)   
+        nodo->izq = insertarInsumo(nodo->izq, t);   
+    else if(t->nom_in.compare(nodo->info->nom_in) > 0)   
+        nodo->der = insertarInsumo(nodo->der, t); 
+ return nodo;
+}
+//METODO RETIRAR
+NodoArbol* retirarInsumo(NodoArbol* r, Insumo* v){
+    NodoArbol *t, *f;   
+    if (r == NULL)   
+        return NULL;   
+    else if (v->nom_in.compare(r->info->nom_in) < 0)   
+        r->izq = retirarInsumo(r->izq, v);   
+    else if (v->nom_in.compare(r->info->nom_in) > 0)   
+        r->der = retirarInsumo(r->der, v);   
+    else { // encontro el nodo a retirar
+        if (r->izq == NULL && r->der == NULL){
+            free(r);  r = NULL;   
+        }
+        else if (r->izq == NULL){
+            t = r; 
+            r = r->der;   
+            free(t);   
+        }
+        else if (r->der == NULL) {
+            t = r;   
+            r = r->izq;   
+            free (t);
+        }
+        else {
+            f = r->izq;   
+            while (f->der != NULL)   
+            {
+                f = f->der;   
+            }
+            r->info = f->info;   
+            f->info = v;   
+            r->izq = retirarInsumo(r->izq, v);   
+        }
+    }
+    return r;
+}
+int main()
+{
+    cout<<"Hello World";
+    Insumo * a = crearInsumo(1001, "nombre", "Carnes","Bolsa", 12.50);
+    Insumo * b = crearInsumo(1002, "nombre1", "Lacteo", "Caja", 10.60);
+    Insumo * c = crearInsumo(1003, "nombre2", "Vegetales", "Bolsa", 2.60);
+    Insumo * d = crearInsumo(1004, "nombre3", "Bebidas", "Botella", 12.30);
+    NodoArbol * x = crearArbol(a, NULL,crearArbol(b,NULL,crearArbol(c,NULL,NULL)));
+    insertarInsumo(x, d);
+    retirarInsumo(x, b);
+    imprimirArbol(x);
+    
+    cout<<"\n\n";
+    imprimirInsumo(buscar(x, "nombre3"));
+
+    return 0;
+}
