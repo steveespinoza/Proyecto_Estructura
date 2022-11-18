@@ -766,9 +766,7 @@ void actualizarStock(NodoArbol *x) {
 
 		actualizarStock(x->izq);
 		actualizarStock(x->der);
-		if (x->info->stock > 0 && x->izq == NULL && x->der == NULL) {
-			cout << "\nTodos los productos disponen de stock";
-		}
+		
 	}
 }
 
